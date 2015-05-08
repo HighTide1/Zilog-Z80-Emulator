@@ -1,0 +1,56 @@
+//====================================================================================
+// Name        : Z80.h
+// Author      : Jered Tupik
+// Version     : 1.0	4/24/2015
+// Copyright   : GNU v3 Public License
+//
+//				 Copyright (C) 2015  Tupik, Jered
+//
+//			     This program is free software: you can redistribute it and/or modify
+//    			 it under the terms of the GNU General Public License as published by
+//   			 the Free Software Foundation, either version 3 of the License, or
+//    			 (at your option) any later version.
+//
+//    			 This program is distributed in the hope that it will be useful,
+//    			 but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    			 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    			 GNU General Public License for more details.
+//
+//   			 You should have received a copy of the GNU General Public License
+//    			 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// Description : Definition file for Z80 Flags and other defined operands
+//====================================================================================
+#ifndef Z80FLAGS_H_
+#define Z80FLAGS_H_
+
+//Status Register Flags
+//Carry Flag
+#define CF 0b00000001
+
+//Subtract Flag
+#define NF 0b00000010
+
+//Parity/Overflow Flag
+#define PVF 0b00000100
+
+//Undocumented, Copy of bit 3
+#define F3F 0b00001000
+
+//Half Carry Flag (Carry of bit 3 to bit 4)
+#define HF 0b00010000
+
+//Undocumented, Copy of bit 5
+#define F5F 0b00100000
+
+//Zero Flag
+#define ZF 0b01000000
+
+//Sign Flag
+#define SF 0b10000000
+
+//Register References (M - Main, S - Shadow)
+#define M_REGISTER    0
+#define S_REGISTER    1
+
+#endif /* Z80FLAGS_H_ */
