@@ -28,6 +28,10 @@
 #include <iostream>
 #include <stdint.h>
 #include <string>
+#include <thread>
+#include <vector>
+
+#include "IInterruptDevice.h"
 #include "Z80Defines.h"
 
 class Z80{
@@ -47,10 +51,10 @@ class Z80{
 		uint16_t BC[2];
 
 		//2nd Register Pairing (2 8-bit / 1 16-bit)
-		uint8_t DE[2];
+		uint16_t DE[2];
 
 		//3rd Register Pairing (2 8-bit / 1 16-bit)
-		uint8_t HL[2];
+		uint16_t HL[2];
 
 		//Index X Register
 		uint16_t IX;
@@ -70,22 +74,56 @@ class Z80{
 		//Program Counter
 		uint16_t PC;
 
-		//NMI (Non Maskable Interrupt)
-		bool NMI;
+		//Clock Cycles for the Z80 Emulator
+		unsigned long long int T;
+
+		//Machine Cycles for the Z80 Emulator
+		unsigned long long int M;
+
+		//External RAM for the Z80 Emulator
+		uint8_t Memory[MEMORY_SIZE];
+
+		//Interrupt Modes
+		enum INTERRUPTMODE{
+			M0,
+			M1,
+			M2
+		};
+		INTERRUPTMODE CPUMode;
+
+		//Interrupt Devices
+		std::vector<IInterruptDevice> InterruptDevices;
+
+		//Interrupts
+		enum INTERRUPT{
+			NONE,
+			MI,		//Maskable Interrupt
+			NMI		//Non-Maskable Interrupt
+		};
+		INTERRUPT InterruptType;
+
+		//Interrupt Monitoring Thread
+		std::thread InterruptMonitor;
 
 		//Interrupt Flip Flop Registers
 		bool IFF1;
 		bool IFF2;
 
-		//Clock Cycle Count
-		unsigned long long int CC;
+		//Interrupt Data Code
+		uint8_t interruptCode;
+
+		//HALT Instruction
+		bool HALT;
 
 		void initializeRegisters();
 
+		void interruptHandler(uint16_t);
 	public:
 
 		//Constructors/Destructors
 		Z80();
+		Z80(const char*);
+		Z80(const std::string);
 		~Z80();
 
 		//Loading/Reset Commands
@@ -93,9 +131,10 @@ class Z80{
 		void resetZ80();
 
 		void runCycle();
+		uint8_t executeOPCode(const uint8_t);
 
 		uint8_t popStack();
-		void pushStack(const uint8_t);
+		uint8_t pushStack(const uint8_t);
 
 		//ALU Methods
 		void ADD(uint16_t&, uint16_t&);
@@ -104,14 +143,14 @@ class Z80{
 		void OR(uint16_t&, uint16_t&);
 		void EXCLUSIVEOR(uint16_t&, uint16_t&);
 		void COMPARE(uint16_t&, uint16_t&);
-		void ARITHMETICSHIFTBITS(uint16_t&, uint16_t&);
-		void LOGICALSHIFTBITS(uint16_t&, uint16_t&);
-		void ROTATE(uint16_t&);
-		void INCREMENT(uint16_t&);
-		void DECREMENT(uint16_t&);
-		void SETBIT(uint16_t&, uint16_t&);
-		void RESETBIT(uint16_t&, uint16_t&);
-		bool TESTBIT(uint16_t&, uint16_t&);
+		void ARITHMETICSHIFTBITS(uint16_t&, int16_t);
+		void LOGICALSHIFTBITS(uint16_t&, int16_t);
+		void ROTATE(uint16_t&, bool);
+		void INCREMENT(uint16_t&, bool);
+		void DECREMENT(uint16_t&, bool);
+		void SETBIT(uint16_t&, uint16_t);
+		void RESETBIT(uint16_t&, uint16_t);
+		void TESTBIT(uint16_t&, uint16_t);
 
 };
 

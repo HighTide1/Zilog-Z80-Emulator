@@ -1,7 +1,7 @@
 //====================================================================================
-// Name        : Z80.h
+// Name        : IInterruptDevice.h
 // Author      : Jered Tupik
-// Version     : 1.0	4/24/2015
+// Version     : 1.0	5/15/2015
 // Copyright   : GNU v3 Public License
 //
 //				 Copyright (C) 2015  Tupik, Jered
@@ -19,38 +19,18 @@
 //   			 You should have received a copy of the GNU General Public License
 //    			 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Description : Definition file for Z80 Flags and other defined operands
+// Description : Interface File for the InterruptDevice Abstract Class/Interface
 //====================================================================================
-#ifndef Z80FLAGS_H_
-#define Z80FLAGS_H_
+#ifndef IINTERRUPTDEVICE_H_
+#define IINTERRUPTDEVICE_H_
 
-//Status Register Flags
-//Carry Flag
-#define CF 0b00000001
+class IInterruptDevice{
+	public:
 
-//Subtract Flag
-#define NF 0b00000010
+		virtual ~IInterruptDevice() {}
 
-//Parity/Overflow Flag
-#define PVF 0b00000100
+		virtual uint8_t PollDevice() 	  = 0;
+		virtual bool 	isNonMaskable()   =	0;
+};
 
-//Undocumented, Copy of bit 3
-#define F3F 0b00001000
-
-//Half Carry Flag (Carry of bit 3 to bit 4)
-#define HF 0b00010000
-
-//Undocumented, Copy of bit 5
-#define F5F 0b00100000
-
-//Zero Flag
-#define ZF 0b01000000
-
-//Sign Flag
-#define SF 0b10000000
-
-//Register References (M - Main, S - Shadow)
-#define M_REGISTER    0
-#define S_REGISTER    1
-
-#endif /* Z80FLAGS_H_ */
+#endif /* IINTERRUPTDEVICE_H_ */

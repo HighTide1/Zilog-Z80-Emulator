@@ -57,8 +57,9 @@
 #define MEMORY_SIZE   0x10000
 
 //Error Codes
-#define FILE_GOOD    0
-#define INVALID_FILE 1
-#define FILE_TO_BIG  2
+#define INVALID_FILE 	1
+#define FILE_TO_BIG  	2
+#define MEMORY_OVERFLOW 3
+#define INVALID_OPCODE  4
 
 #endif /* Z80DEFINES_H_ */
