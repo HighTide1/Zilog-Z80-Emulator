@@ -28,14 +28,15 @@
 #include <iostream>
 #include <stdint.h>
 #include <string>
-#include <thread>
-#include <vector>
 
-#include "IInterruptDevice.h"
+#include "InterruptMonitor.h"
 #include "Z80Defines.h"
+#include "Z80Stack.h"
 
 class Z80{
 	private:
+		//External RAM for the Z80 Emulator
+		uint8_t* Memory;
 
 		/**
 		 * Every Main Register on the Z80 has a respective
@@ -62,8 +63,8 @@ class Z80{
 		//Index Y Register
 		uint16_t IY;
 
-		//Stack Pointer
-		uint16_t SP;
+		//Z80 Stack
+		Z80Stack Stack;
 
 		//Interrupt Vector
 		uint8_t I;
@@ -80,9 +81,6 @@ class Z80{
 		//Machine Cycles for the Z80 Emulator
 		unsigned long long int M;
 
-		//External RAM for the Z80 Emulator
-		uint8_t Memory[MEMORY_SIZE];
-
 		//Interrupt Modes
 		enum INTERRUPTMODE{
 			M0,
@@ -91,35 +89,19 @@ class Z80{
 		};
 		INTERRUPTMODE CPUMode;
 
-		//Interrupt Devices
-		std::vector<IInterruptDevice> InterruptDevices;
-
-		//Interrupts
-		enum INTERRUPT{
-			NONE,
-			MI,		//Maskable Interrupt
-			NMI		//Non-Maskable Interrupt
-		};
-		INTERRUPT InterruptType;
-
-		//Interrupt Monitoring Thread
-		std::thread InterruptMonitor;
+		//Interrupt Poller for the Z80
+		InterruptMonitor InterruptPoller;
 
 		//Interrupt Flip Flop Registers
 		bool IFF1;
 		bool IFF2;
 
-		//Interrupt Data Code
-		uint8_t interruptCode;
-
 		//HALT Instruction
 		bool HALT;
 
 		void initializeRegisters();
-
-		void interruptHandler(uint16_t);
+		void resetMemory();
 	public:
-
 		//Constructors/Destructors
 		Z80();
 		Z80(const char*);
@@ -132,26 +114,6 @@ class Z80{
 
 		void runCycle();
 		uint8_t executeOPCode(const uint8_t);
-
-		uint8_t popStack();
-		uint8_t pushStack(const uint8_t);
-
-		//ALU Methods
-		void ADD(uint16_t&, uint16_t&);
-		void SUBTRACT(uint16_t&, uint16_t&);
-		void AND(uint16_t&, uint16_t&);
-		void OR(uint16_t&, uint16_t&);
-		void EXCLUSIVEOR(uint16_t&, uint16_t&);
-		void COMPARE(uint16_t&, uint16_t&);
-		void ARITHMETICSHIFTBITS(uint16_t&, int16_t);
-		void LOGICALSHIFTBITS(uint16_t&, int16_t);
-		void ROTATE(uint16_t&, bool);
-		void INCREMENT(uint16_t&, bool);
-		void DECREMENT(uint16_t&, bool);
-		void SETBIT(uint16_t&, uint16_t);
-		void RESETBIT(uint16_t&, uint16_t);
-		void TESTBIT(uint16_t&, uint16_t);
-
 };
 
 #endif

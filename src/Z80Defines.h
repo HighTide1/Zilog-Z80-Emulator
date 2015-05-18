@@ -56,10 +56,19 @@
 //External Memory Size (65536 bytes)
 #define MEMORY_SIZE   0x10000
 
+//Interrupt Type Masks
+#define INTERRUPT_NONE 0
+#define INTERRUPT_MASK 1
+#define INTERRUPT_NMSK 2
+
 //Error Codes
-#define INVALID_FILE 	1
-#define FILE_TO_BIG  	2
-#define MEMORY_OVERFLOW 3
-#define INVALID_OPCODE  4
+#define EXIT_SUCCESS	 0
+#define INVALID_FILE 	 1
+#define FILE_TO_BIG  	 2
+
+#define MEMORY_OVERFLOW  1
+#define MEMORY_UNDERFLOW 2
+
+#define INVALID_OPCODE   1
 
 #endif /* Z80DEFINES_H_ */

@@ -1,7 +1,7 @@
 //====================================================================================
-// Name        : IInterruptDevice.h
+// Name        : InterruptMonitor.h
 // Author      : Jered Tupik
-// Version     : 1.0	5/15/2015
+// Version     : 1.0	5/17/2015
 // Copyright   : GNU v3 Public License
 //
 //				 Copyright (C) 2015  Tupik, Jered
@@ -19,24 +19,43 @@
 //   			 You should have received a copy of the GNU General Public License
 //    			 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Description : Interface File for the InterruptDevice Abstract Class/Interface
+// Description : Definition file of the InterruptMonitor for the Z80.
 //====================================================================================
-#ifndef IINTERRUPTDEVICE_H_
-#define IINTERRUPTDEVICE_H_
+#ifndef INTERRUPTMONITOR_H_
+#define INTERRUPTMONITOR_H_
 
-#include <stdint.h>
+#include <thread>
+#include <vector>
 
-class IInterruptDevice{
+#include "IInterruptDevice.h"
+#include "Z80Defines.h"
+
+class InterruptMonitor{
 	private:
-		//Port of the Connected Device
-		uint8_t DevicePort;
+		//Devices to monitor for interrupts.
+		std::vector<IInterruptDevice*> ConnectedDevices;
 
+		//Last unprocessed Interrupt Code
+		uint16_t InterruptCode = 0;
+
+		//Interrupt Process Status
+		bool processedInterrupt = false;
+
+		//Interrupt Monitoring Thread
+		std::thread InterruptPoller;
+
+		//InterruptPoller method for monitoring devices
+		void processDevices(uint16_t);
 	public:
+		InterruptMonitor();
+		InterruptMonitor(std::vector<IInterruptDevice*>&);
+		~InterruptMonitor();
 
-		virtual ~IInterruptDevice() {}
+		void addDevice(IInterruptDevice*);
 
-		virtual uint8_t PollDevice() 	  = 0;
-		virtual bool 	isNonMaskable()   =	0;
+		uint16_t processInterrupt();
+
+		void stopInterruptMonitor();
 };
 
-#endif /* IINTERRUPTDEVICE_H_ */
+#endif /* INTERRUPTMONITOR_H_ */

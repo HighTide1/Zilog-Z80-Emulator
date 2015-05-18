@@ -1,7 +1,7 @@
 //====================================================================================
-// Name        : IInterruptDevice.h
+// Name        : Z80Stack.h
 // Author      : Jered Tupik
-// Version     : 1.0	5/15/2015
+// Version     : 1.0	5/17/2015
 // Copyright   : GNU v3 Public License
 //
 //				 Copyright (C) 2015  Tupik, Jered
@@ -19,24 +19,38 @@
 //   			 You should have received a copy of the GNU General Public License
 //    			 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Description : Interface File for the InterruptDevice Abstract Class/Interface
+// Description : Definition file of Z80Stack
 //====================================================================================
-#ifndef IINTERRUPTDEVICE_H_
-#define IINTERRUPTDEVICE_H_
+#ifndef Z80STACK_H_
+#define Z80STACK_H_
 
 #include <stdint.h>
 
-class IInterruptDevice{
+#include "Z80Defines.h"
+
+class Z80Stack{
 	private:
-		//Port of the Connected Device
-		uint8_t DevicePort;
+		//Stack Pointer of the Z80 Stack
+		uint16_t SP;
 
+		//Reference to memory of the Z80 Microprocessor
+		uint8_t* Memory;
 	public:
+		Z80Stack();
+		Z80Stack(const uint16_t, uint8_t*);
+		~Z80Stack();
 
-		virtual ~IInterruptDevice() {}
+		uint16_t getStackPointer();
+		void 	 setStackPointer(uint16_t);
 
-		virtual uint8_t PollDevice() 	  = 0;
-		virtual bool 	isNonMaskable()   =	0;
+		uint8_t  increaseStackPointer();
+		uint8_t  decreaseStackPointer();
+
+		uint8_t  pushByte(uint8_t);
+		uint8_t  pushWord(uint16_t);
+
+		uint8_t  popByte();
+		uint16_t popWord();
 };
 
-#endif /* IINTERRUPTDEVICE_H_ */
+#endif /* Z80STACK_H_ */
