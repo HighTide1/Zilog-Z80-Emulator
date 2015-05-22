@@ -131,7 +131,7 @@ uint8_t Z80Stack::pushWord(uint16_t Value){
 		ExitStatus |= MEMORY_OVERFLOW;
 	}
 	Memory[--SP] = (Value >> 8);
-	Memory[--SP] = (Value & 0xFF);
+	Memory[--SP] = (Value & BYTE_MASK);
 	return ExitStatus;
 }
 

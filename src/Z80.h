@@ -30,6 +30,7 @@
 #include <string>
 
 #include "InterruptMonitor.h"
+#include "Z80ALU.h"
 #include "Z80Defines.h"
 #include "Z80Stack.h"
 
@@ -80,6 +81,9 @@ class Z80{
 
 		//Machine Cycles for the Z80 Emulator
 		unsigned long long int M;
+
+		//Z80 ALU Reference
+		Z80ALU ALU;
 
 		//Interrupt Modes
 		enum INTERRUPTMODE{

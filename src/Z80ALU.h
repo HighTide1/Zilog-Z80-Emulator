@@ -26,10 +26,18 @@
 
 #include <stdint.h>
 
+#include "Z80Defines.h"
+
 class Z80ALU{
 	private:
 		//Flags set by the previous operation
-		uint8_t Flags = 0;
+		uint8_t Flags;
+
+		//Set the Flags similar throughout different operations
+		const uint8_t CHECK(uint8_t&);
+
+		//Determine the Parity of a byte(True = Even, False = Odd)
+		const bool PARITY(uint8_t&);
 	public:
 		Z80ALU();
 		Z80ALU(uint8_t&);
@@ -40,11 +48,14 @@ class Z80ALU{
 
 		//Addition Operations
 		void ADD_B(uint8_t&, uint8_t&);
+		void ADC_B(uint8_t&, uint8_t&);
 		void ADD_W(uint16_t&, uint16_t&);
+		void ADC_W(uint16_t&, uint16_t&);
 
-		//Subtraction Operations
+		//Subtraction Operation
 		void SUB_B(uint8_t&, uint8_t&);
-		void SUB_W(uint16_t&, uint16_t&);
+		void SBC_B(uint8_t&, uint8_t&);
+		void SBC_W(uint16_t&, uint16_t&);
 
 		//AND / OR / EXCLUSIVEOR Operations
 		void AND(uint8_t&, uint8_t&);

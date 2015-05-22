@@ -62,6 +62,7 @@ void Z80::initializeRegisters(){
 	this->resetMemory();
 
 	Stack = Z80Stack(0, Memory);
+	ALU = Z80ALU();
 
 	IFF1 = false;
 	IFF2 = false;
@@ -115,7 +116,6 @@ uint8_t Z80::loadFile(const std::string FN){
  * (http://www.z80.info/zip/z80cpu_um.pdf)
  */
 void Z80::resetZ80(){
-
 	initializeRegisters();
 	for(size_t i = 0; i < 2; i++){
 		AF[i] = 0xFFFF;
@@ -144,7 +144,7 @@ void Z80::runCycle(){
 			}else if(InterruptType == INTERRUPT_MASK && IFF1 == true){
 				switch(CPUMode){
 					case M0:
-						if(this->executeOPCode((InterruptCode & 0xFF)) != 0){
+						if(this->executeOPCode((InterruptCode & BYTE_MASK)) != 0){
 
 						}
 						break;
@@ -154,7 +154,7 @@ void Z80::runCycle(){
 						break;
 					case M2:
 						Stack.pushWord(PC);
-						PC = ((I << 8) | (InterruptCode & 0xFE));
+						PC = ((I << 8) | (InterruptCode & (BYTE_MASK - 1)));
 						break;
 					default:
 						break;
@@ -175,11 +175,21 @@ void Z80::runCycle(){
  * Errors:				INVALID_OPCODE - 4
  */
 uint8_t Z80::executeOPCode(const uint8_t OPCode){
-	uint8_t Flags(0);
-	switch(OPCode){
-		default:
-			Flags |= INVALID_OPCODE;
-			break;
+	uint8_t ExitStatus(0);
+	if(OPCode == 0xED){
+
+	}else if(OPCode == 0xCB){
+
+	}else if(OPCode == 0xDD){
+
+	}else if(OPCode == 0xDDCB){
+
+	}else if(OPCode == 0xFD){
+
+	}else if(OPCode == 0xFDCB){
+
+	}else{
+
 	}
-	return Flags;
+	return ExitStatus;
 }

@@ -49,6 +49,10 @@
 //Sign Flag
 #define SF 0b10000000
 
+//Pattern Masks
+#define BYTE_MASK     0xFF
+#define NIBBLE_MASK   0xF
+
 //Register References (M - Main, S - Shadow)
 #define M_REGISTER    0
 #define S_REGISTER    1
