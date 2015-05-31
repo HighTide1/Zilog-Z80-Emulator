@@ -34,7 +34,7 @@ case 0x02:
 	break;
 case 0x03:
 	ALU.INC_W(BC[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x04:
 	ALU.INC_B(B);
@@ -61,14 +61,14 @@ case 0x08:
 }
 case 0x09:
 	ALU.ADD_W(HL[M_REGISTER], BC[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x0A:
 	A = Memory.get()[BC[M_REGISTER]];
 	break;
 case 0x0B:
 	ALU.DEC_W(BC[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x0C:
 	ALU.INC_B(C);
@@ -101,7 +101,7 @@ case 0x12:
 	break;
 case 0x13:
 	ALU.INC_W(DE[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x14:
 	ALU.INC_B(D);
@@ -133,7 +133,7 @@ case 0x1A:
 	break;
 case 0x1B:
 	ALU.DEC_W(DE[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x1C:
 	ALU.INC_B(E);
@@ -153,7 +153,7 @@ case 0x1F:
 case 0x20:
 	if((F & ZF) == 0){
 		uint16_t C_PC = PC;
-		PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + ALU.CMP_B(getMemoryByte());
 		mP = true;
 	}
 	break;
@@ -165,7 +165,7 @@ case 0x22:
 	break;
 case 0x23:
 	ALU.INC_W(HL[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x24:
 	ALU.INC_B(H);
@@ -242,20 +242,20 @@ case 0x27:
 case 0x28:
 	if((F & ZF) != 0){
 		uint16_t C_PC = PC;
-		PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + ALU.CMP_B(getMemoryByte());
 		mP = true;
 	}
 	break;
 case 0x29:
 	ALU.ADD_W(HL[M_REGISTER], HL[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x2A:
 	HL[M_REGISTER] = Memory.get()[getMemoryWord()];
 	break;
 case 0x2B:
 	ALU.DEC_W(HL[M_REGISTER]);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x2C:
 	ALU.INC_B(L);
@@ -276,7 +276,7 @@ case 0x2F:
 case 0x30:
 	if((F & CF) == 0){
 		uint16_t C_PC = PC;
-		PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + ALU.CMP_B(getMemoryByte());
 		mP = true;
 	}
 	break;
@@ -289,7 +289,7 @@ case 0x32:
 case 0x33:
 	ALU.INC_W(SP);
 	Stack.setStackPointer(SP);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x34:
 	ALU.INC_B(Memory.get()[HL[M_REGISTER]]);
@@ -308,20 +308,20 @@ case 0x37:
 case 0x38:
 	if((F & CF) != 0){
 		uint16_t C_PC = PC;
-		PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + ALU.CMP_B(getMemoryByte());
 		mP = true;
 	}
 	break;
 case 0x39:
 	ALU.ADD_W(HL[M_REGISTER], SP);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x3A:
 	A = Memory.get()[getMemoryWord()];
 	break;
 case 0x3B:
 	ALU.DEC_W(SP);
-	F = ALU.getFlags();
+	//F = ALU.getFlags();
 	break;
 case 0x3C:
 	ALU.INC_B(A);

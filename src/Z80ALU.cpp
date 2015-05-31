@@ -409,11 +409,11 @@ void Z80ALU::INC_W(uint16_t& NUM){
 	this->INC_B(L_N);
 	this->ADC_B(H_N, SH);
 	RESULT = (H_N << 8) | L_N;
-	if(RESULT == 0){
+	/*if(RESULT == 0){
 		this->setFlags(this->getFlags() | ZF);
 	}else{
 		this->setFlags(this->getFlags() & ~ZF);
-	}
+	}*/
 	NUM = RESULT;
 }
 
@@ -450,11 +450,11 @@ void Z80ALU::DEC_W(uint16_t& NUM){
 	this->DEC_B(L_N);
 	this->SBC_B(H_N, SH);
 	RESULT = (H_N << 8) | L_N;
-	if(RESULT == 0){
+	/*if(RESULT == 0){
 		this->setFlags(this->getFlags() | ZF);
 	}else{
 		this->setFlags(this->getFlags() & ~ZF);
-	}
+	}*/
 	NUM = RESULT;
 }
 
