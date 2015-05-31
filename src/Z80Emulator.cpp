@@ -21,9 +21,14 @@
 //
 // Description : Application file for the Z80 Emulator
 //============================================================================
-#define EXIT_SUCCESS 0;
+#include "Z80.h"
 
 int main() {
-
+	Z80 Emulator;
+	Emulator.loadFile("C:\\Users\\ProBook\\Downloads\\zexdoc.com", 0x100);
+	Emulator.setPC(0x100);
+	while(true){
+		Emulator.runCycle();
+	}
 	return EXIT_SUCCESS;
 }

@@ -26,16 +26,21 @@
 //Constructors / Destructors of the Z80 Stack Implementation
 Z80Stack::Z80Stack(){
 	SP = 0x0;
-	Memory = new uint8_t[MEMORY_SIZE];
+	Memory = std::shared_ptr<uint8_t>(new uint8_t[MEMORY_SIZE], std::default_delete<uint8_t[]>());
 }
 
 Z80Stack::Z80Stack(const uint16_t StackPointer, uint8_t* M){
+	SP = StackPointer;
+	Memory = std::shared_ptr<uint8_t>(M, std::default_delete<uint8_t[]>());
+}
+
+Z80Stack::Z80Stack(const uint16_t StackPointer, std::shared_ptr<uint8_t> M){
 	SP = StackPointer;
 	Memory = M;
 }
 
 Z80Stack::~Z80Stack(){
-	delete[] Memory;
+
 }
 
 /**
@@ -107,7 +112,7 @@ uint8_t Z80Stack::decreaseStackPointer(){
  */
 uint8_t Z80Stack::pushByte(uint8_t Value){
 	uint8_t ExitStatus(0);
-	Memory[--SP] = Value;
+	Memory.get()[--SP] = Value;
 	return ExitStatus;
 }
 
@@ -130,8 +135,8 @@ uint8_t Z80Stack::pushWord(uint16_t Value){
 	if(SP == 0){
 		ExitStatus |= MEMORY_OVERFLOW;
 	}
-	Memory[--SP] = (Value >> 8);
-	Memory[--SP] = (Value & BYTE_MASK);
+	Memory.get()[--SP] = (Value >> 8);
+	Memory.get()[--SP] = (Value & BYTE_MASK);
 	return ExitStatus;
 }
 
@@ -142,7 +147,7 @@ uint8_t Z80Stack::pushWord(uint16_t Value){
  */
 uint8_t Z80Stack::popByte(){
 	uint8_t StackByte(0);
-	StackByte = Memory[SP++];
+	StackByte = Memory.get()[SP++];
 	return StackByte;
 }
 
@@ -155,7 +160,7 @@ uint8_t Z80Stack::popByte(){
  */
 uint16_t Z80Stack::popWord(){
 	uint16_t StackWord(0);
-	StackWord = Memory[SP++];
-	StackWord = (Memory[SP++] << 8) | StackWord;
+	StackWord = Memory.get()[SP++];
+	StackWord = (Memory.get()[SP++] << 8) | StackWord;
 	return StackWord;
 }

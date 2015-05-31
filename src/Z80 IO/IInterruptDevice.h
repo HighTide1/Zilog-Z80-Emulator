@@ -21,8 +21,8 @@
 //
 // Description : Interface File for the InterruptDevice Abstract Class/Interface
 //====================================================================================
-#ifndef IINTERRUPTDEVICE_H_
-#define IINTERRUPTDEVICE_H_
+#ifndef Z80_IO_IINTERRUPTDEVICE_H_
+#define Z80_IO_IINTERRUPTDEVICE_H_
 
 #include <stdint.h>
 
@@ -39,4 +39,4 @@ class IInterruptDevice{
 		virtual bool 	isNonMaskable()   =	0;
 };
 
-#endif /* IINTERRUPTDEVICE_H_ */
+#endif /* Z80_IO_IINTERRUPTDEVICE_H_ */

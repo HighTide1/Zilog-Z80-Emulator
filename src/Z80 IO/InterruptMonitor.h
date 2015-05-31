@@ -21,14 +21,14 @@
 //
 // Description : Definition file of the InterruptMonitor for the Z80.
 //====================================================================================
-#ifndef INTERRUPTMONITOR_H_
-#define INTERRUPTMONITOR_H_
+#ifndef Z80_IO_INTERRUPTMONITOR_H_
+#define Z80_IO_INTERRUPTMONITOR_H_
 
 #include <thread>
 #include <vector>
 
 #include "IInterruptDevice.h"
-#include "Z80Defines.h"
+#include "../Z80Defines.h"
 
 class InterruptMonitor{
 	private:
@@ -58,4 +58,4 @@ class InterruptMonitor{
 		void stopInterruptMonitor();
 };
 
-#endif /* INTERRUPTMONITOR_H_ */
+#endif

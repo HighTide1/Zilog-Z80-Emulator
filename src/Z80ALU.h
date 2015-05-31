@@ -28,16 +28,11 @@
 
 #include "Z80Defines.h"
 
+/* NOTE: NEED TO CHECK CARRY OPERATIONS FOR FLAG SETTING ALONG WITH WORD OPERATIONS */
 class Z80ALU{
 	private:
 		//Flags set by the previous operation
 		uint8_t Flags;
-
-		//Set the Flags similar throughout different operations
-		const uint8_t CHECK(uint8_t&);
-
-		//Determine the Parity of a byte(True = Even, False = Odd)
-		const bool PARITY(uint8_t&);
 	public:
 		Z80ALU();
 		Z80ALU(uint8_t&);
@@ -45,6 +40,18 @@ class Z80ALU{
 
 		uint8_t getFlags();
 		void 	setFlags(uint8_t);
+
+		//Returns the two's complement of a byte
+		int8_t CMP_B(uint8_t);
+
+		//Returns the two's complement of a word
+		int16_t CMP_W(uint16_t);
+
+		//Set the Flags similar throughout different operations
+		const uint8_t CHECK(uint8_t&);
+
+		//Determine the Parity of a byte(True = Even, False = Odd)
+		const bool PARITY(uint8_t&);
 
 		//Addition Operations
 		void ADD_B(uint8_t&, uint8_t&);
@@ -97,6 +104,9 @@ class Z80ALU{
 
 		//Reset Bit Operation
 		void RES(uint8_t&, uint8_t);
+
+		//Negate Operation
+		void NEG(uint8_t&);
 };
 
 #endif /* Z80ALU_H_ */

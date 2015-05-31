@@ -25,11 +25,12 @@
 #define Z80_H_
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <stdint.h>
 #include <string>
 
-#include "InterruptMonitor.h"
+#include "Z80 IO/InterruptMonitor.h"
 #include "Z80ALU.h"
 #include "Z80Defines.h"
 #include "Z80Stack.h"
@@ -37,7 +38,7 @@
 class Z80{
 	private:
 		//External RAM for the Z80 Emulator
-		uint8_t* Memory;
+		std::shared_ptr<uint8_t> Memory;
 
 		/**
 		 * Every Main Register on the Z80 has a respective
@@ -76,6 +77,15 @@ class Z80{
 		//Program Counter
 		uint16_t PC;
 
+		//Repeat Instruction
+		bool rI;
+
+		//Modify PC Instruction
+		bool mP;
+
+		//Address Bus
+		uint8_t BUS[BUS_SIZE];
+
 		//Clock Cycles for the Z80 Emulator
 		unsigned long long int T;
 
@@ -94,7 +104,7 @@ class Z80{
 		INTERRUPTMODE CPUMode;
 
 		//Interrupt Poller for the Z80
-		InterruptMonitor InterruptPoller;
+		//InterruptMonitor InterruptPoller;
 
 		//Interrupt Flip Flop Registers
 		bool IFF1;
@@ -104,7 +114,15 @@ class Z80{
 		bool HALT;
 
 		void initializeRegisters();
+		void storeRegister(uint16_t&, uint8_t, uint8_t, bool);
+
+		uint8_t getMemoryByte();
+		uint16_t getMemoryWord();
 		void resetMemory();
+
+		uint8_t& getBus();
+		void writeBus(uint8_t, uint8_t);
+		void resetBus();
 	public:
 		//Constructors/Destructors
 		Z80();
@@ -113,11 +131,13 @@ class Z80{
 		~Z80();
 
 		//Loading/Reset Commands
-		uint8_t loadFile(const std::string);
+		uint8_t loadFile(std::string, uint16_t);
 		void resetZ80();
 
+		void setPC(uint16_t);
+
 		void runCycle();
-		uint8_t executeOPCode(const uint8_t);
+		uint8_t executeOPCode(uint8_t);
 };
 
 #endif

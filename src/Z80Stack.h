@@ -25,6 +25,7 @@
 #define Z80STACK_H_
 
 #include <stdint.h>
+#include <memory>
 
 #include "Z80Defines.h"
 
@@ -34,10 +35,12 @@ class Z80Stack{
 		uint16_t SP;
 
 		//Reference to memory of the Z80 Microprocessor
-		uint8_t* Memory;
+		std::shared_ptr<uint8_t> Memory;
+
 	public:
 		Z80Stack();
 		Z80Stack(const uint16_t, uint8_t*);
+		Z80Stack(const uint16_t, std::shared_ptr<uint8_t>);
 		~Z80Stack();
 
 		uint16_t getStackPointer();

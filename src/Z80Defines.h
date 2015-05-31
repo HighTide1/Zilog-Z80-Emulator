@@ -60,6 +60,9 @@
 //External Memory Size (65536 bytes)
 #define MEMORY_SIZE   0x10000
 
+//Address Bus Size (256 different ports)
+#define BUS_SIZE 0x100
+
 //Interrupt Type Masks
 #define INTERRUPT_NONE 0
 #define INTERRUPT_MASK 1
