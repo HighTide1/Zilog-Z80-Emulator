@@ -54,8 +54,7 @@ case 0x07:
 case 0x08:
 {
 	uint16_t AF_C = AF[M_REGISTER];
-	A = (AF[S_REGISTER] >> 8);
-	F = (AF[S_REGISTER] & BYTE_MASK);
+	AF[M_REGISTER] = AF[S_REGISTER];
 	AF[S_REGISTER] = AF_C;
 	break;
 }
@@ -89,8 +88,10 @@ case 0x10:
 	ALU.DEC_B(B);
 	if((ALU.getFlags() & ZF) == 0){
 		uint16_t C_PC = PC;
-		PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
+	}else{
+		PC += 1;
 	}
 	break;
 case 0x11:
@@ -121,7 +122,7 @@ case 0x17:
 case 0x18:
 {
 	uint16_t C_PC = PC;
-	PC = (C_PC - 1) + ALU.CMP_B(getMemoryByte());
+	PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 	mP = true;
 	break;
 }
@@ -153,8 +154,10 @@ case 0x1F:
 case 0x20:
 	if((F & ZF) == 0){
 		uint16_t C_PC = PC;
-		PC = C_PC + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
+	}else{
+		PC += 1;
 	}
 	break;
 case 0x21:
@@ -242,8 +245,10 @@ case 0x27:
 case 0x28:
 	if((F & ZF) != 0){
 		uint16_t C_PC = PC;
-		PC = C_PC + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
+	}else{
+		PC += 1;
 	}
 	break;
 case 0x29:
@@ -276,15 +281,17 @@ case 0x2F:
 case 0x30:
 	if((F & CF) == 0){
 		uint16_t C_PC = PC;
-		PC = C_PC + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
+	}else{
+		PC += 1;
 	}
 	break;
 case 0x31:
 	Stack.setStackPointer(getMemoryWord());
 	break;
 case 0x32:
-	Memory.get()[getMemoryWord()] = HL[M_REGISTER];
+	Memory.get()[getMemoryWord()] = A;
 	break;
 case 0x33:
 	ALU.INC_W(SP);
@@ -308,8 +315,10 @@ case 0x37:
 case 0x38:
 	if((F & CF) != 0){
 		uint16_t C_PC = PC;
-		PC = C_PC + ALU.CMP_B(getMemoryByte());
+		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
+	}else{
+		PC += 1;
 	}
 	break;
 case 0x39:
@@ -321,6 +330,7 @@ case 0x3A:
 	break;
 case 0x3B:
 	ALU.DEC_W(SP);
+	Stack.setStackPointer(SP);
 	//F = ALU.getFlags();
 	break;
 case 0x3C:
@@ -713,7 +723,7 @@ case 0xAD:
 	ALU.XOR(A, L);
 	F = ALU.getFlags();
 	break;
-case 0xAE:
+case 0xAE:	//Only occurs during updcrc
 	ALU.XOR(A, Memory.get()[HL[M_REGISTER]]);
 	F = ALU.getFlags();
 	break;
@@ -795,9 +805,15 @@ case 0xC1:
 	BC[M_REGISTER] = Stack.popWord();
 	break;
 case 0xC2:
+	if(C_IXH == 242 && C_IXL == 43 && B == 214 && H == 30){
+		//Debug during updcrc routine.
+		uint8_t G = 2;
+	}
 	if((F & ZF) == 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xC3:
@@ -809,6 +825,8 @@ case 0xC4:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xC5:
@@ -818,6 +836,7 @@ case 0xC6:
 {
 	uint8_t M_B = getMemoryByte();
 	ALU.ADD_B(A, M_B);
+	F = ALU.getFlags();
 	break;
 }
 case 0xC7:
@@ -839,6 +858,8 @@ case 0xCA:
 	if((F & ZF) != 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xCC:
@@ -846,6 +867,8 @@ case 0xCC:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xCD:
@@ -878,6 +901,8 @@ case 0xD2:
 	if((F & CF) == 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xD3:
@@ -889,6 +914,8 @@ case 0xD4:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xD5:
@@ -898,6 +925,7 @@ case 0xD6:
 {
 	uint8_t M_B = getMemoryByte();
 	ALU.SUB_B(A, M_B);
+	F = ALU.getFlags();
 	break;
 }
 case 0xD7:
@@ -914,16 +942,13 @@ case 0xD8:
 case 0xD9:
 {
 	uint16_t C_R = BC[M_REGISTER];
-	B = (BC[S_REGISTER] >> 8);
-	C = (BC[S_REGISTER] & BYTE_MASK);
+	BC[M_REGISTER] = BC[S_REGISTER];
 	BC[S_REGISTER] = C_R;
 	C_R = DE[M_REGISTER];
-	D = (DE[S_REGISTER] >> 8);
-	E = (DE[S_REGISTER] & BYTE_MASK);
+	DE[M_REGISTER] = DE[S_REGISTER];
 	DE[S_REGISTER] = C_R;
 	C_R = HL[M_REGISTER];
-	H = (HL[S_REGISTER] >> 8);
-	L = (HL[S_REGISTER] & BYTE_MASK);
+	HL[M_REGISTER] = HL[S_REGISTER];
 	HL[S_REGISTER] = C_R;
 	break;
 }
@@ -931,6 +956,8 @@ case 0xDA:
 	if((F & CF) != 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xDB:
@@ -951,6 +978,8 @@ case 0xDC:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xDE:
@@ -978,6 +1007,8 @@ case 0xE2:
 	if((F & PVF) != 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xE3:
@@ -995,6 +1026,8 @@ case 0xE4:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xE5:
@@ -1026,15 +1059,19 @@ case 0xEA:
 	if((F & PVF) == 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xEB:
 {
 	uint16_t C_R = HL[M_REGISTER];
-	H = (BC[M_REGISTER] >> 8);
-	L = (BC[M_REGISTER] & BYTE_MASK);
-	B = (C_R >> 8);
-	C = (C_R & BYTE_MASK);
+	//H = (DE[M_REGISTER] >> 8);
+	//L = (DE[M_REGISTER] & BYTE_MASK);
+	//D = (C_R >> 8);
+	//E = (C_R & BYTE_MASK);
+	HL[M_REGISTER] = DE[M_REGISTER];
+	DE[M_REGISTER] = C_R;
 	break;
 }
 case 0xEC:
@@ -1042,6 +1079,8 @@ case 0xEC:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xEE:
@@ -1057,7 +1096,7 @@ case 0xEF:
 	mP = true;
 	break;
 case 0xF0:
-	if((F & PVF) != 0){
+	if((F & SF) == 0){
 		PC = Stack.popWord();
 		mP = true;
 	}
@@ -1069,6 +1108,8 @@ case 0xF2:
 	if((F & SF) == 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xF3:
@@ -1080,6 +1121,8 @@ case 0xF4:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xF5:
@@ -1110,6 +1153,8 @@ case 0xFA:
 	if((F & SF) != 0){
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xFB:
@@ -1121,6 +1166,8 @@ case 0xFC:
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
+	}else{
+		PC += 2;
 	}
 	break;
 case 0xFE:

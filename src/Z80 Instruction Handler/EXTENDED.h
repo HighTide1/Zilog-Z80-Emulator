@@ -388,7 +388,7 @@ case 0xB0:
 	ALU.INC_W(DE[M_REGISTER]);
 	ALU.DEC_W(BC[M_REGISTER]);
 	F = (F & (SF | ZF | CF));
-	if(BC != 0){
+	if(BC[M_REGISTER] != 0){
 		rI = true;
 	}
 	break;
@@ -399,7 +399,7 @@ case 0xB1:
 	ALU.DEC_W(BC[M_REGISTER]);
 	F &= ~PVF;
 	F |= NF;
-	if(BC != 0 && (F & ZF) == 0){
+	if(BC[M_REGISTER] != 0 && (F & ZF) == 0){
 		rI = true;
 	}
 	break;
@@ -433,7 +433,7 @@ case 0xB8:
 	ALU.DEC_W(DE[M_REGISTER]);
 	ALU.DEC_W(BC[M_REGISTER]);
 	F = (F & (SF | ZF | CF));
-	if(BC != 0){
+	if(BC[M_REGISTER] != 0){
 		rI = true;
 	}
 	break;
@@ -444,7 +444,7 @@ case 0xB9:
 	ALU.DEC_W(BC[M_REGISTER]);
 	F &= ~PVF;
 	F |= NF;
-	if(BC != 0 && (F & ZF) == 0){
+	if(BC[M_REGISTER] != 0 && (F & ZF) == 0){
 		rI = true;
 	}
 	break;

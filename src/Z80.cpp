@@ -61,7 +61,7 @@ void Z80::initializeRegisters(){
 	Memory = std::shared_ptr<uint8_t>(new uint8_t[MEMORY_SIZE], std::default_delete<uint8_t[]>());
 	this->resetMemory();
 
-	Stack = Z80Stack(0, Memory);
+	Stack = Z80Stack(0x100, Memory);
 	//ALU = Z80ALU();
 
 	IFF1 = false;
@@ -305,9 +305,12 @@ uint8_t Z80::executeOPCode(uint8_t OPCode){
 			}
 			break;
 		case 0xED:
-			OPCode = Memory.get()[++PC];
+			OPCode = Memory.get()[PC + 1];
 			switch(OPCode){
 				#include "Z80 Instruction Handler/EXTENDED.h"	//Finished
+			}
+			if(!rI){
+				PC += 1;
 			}
 			break;
 		case 0xFD:
