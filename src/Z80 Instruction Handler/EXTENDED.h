@@ -40,8 +40,12 @@ case 0x42:
 	F = ALU.getFlags();
 	break;
 case 0x43:
-	Memory.get()[getMemoryWord()] = BC[M_REGISTER];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = BC[M_REGISTER] & BYTE_MASK;
+	Memory.get()[ADDRESS + 1] = BC[M_REGISTER] >> 8;
 	break;
+}
 case 0x44:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -73,8 +77,12 @@ case 0x4A:
 	F = ALU.getFlags();
 	break;
 case 0x4B:
-	BC[M_REGISTER] = Memory.get()[getMemoryWord()];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	C = Memory.get()[ADDRESS];
+	B = Memory.get()[ADDRESS + 1];
 	break;
+}
 case 0x4C:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -105,8 +113,12 @@ case 0x52:
 	F = ALU.getFlags();
 	break;
 case 0x53:
-	Memory.get()[getMemoryWord()] = DE[M_REGISTER];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = DE[M_REGISTER] & BYTE_MASK;
+	Memory.get()[ADDRESS + 1] = DE[M_REGISTER] >> 8;
 	break;
+}
 case 0x54:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -138,8 +150,12 @@ case 0x5A:
 	F = ALU.getFlags();
 	break;
 case 0x5B:
-	DE[M_REGISTER] = Memory.get()[getMemoryWord()];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	E = Memory.get()[ADDRESS];
+	D = Memory.get()[ADDRESS + 1];
 	break;
+}
 case 0x5C:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -171,8 +187,12 @@ case 0x62:
 	F = ALU.getFlags();
 	break;
 case 0x63:
-	Memory.get()[getMemoryWord()] = HL[M_REGISTER];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = HL[M_REGISTER] & BYTE_MASK;
+	Memory.get()[ADDRESS + 1] = HL[M_REGISTER] >> 8;
 	break;
+}
 case 0x64:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -212,8 +232,13 @@ case 0x6A:
 	F = ALU.getFlags();
 	break;
 case 0x6B:
-	HL[M_REGISTER] = Memory.get()[getMemoryWord()];
+	//HL[M_REGISTER] = Memory.get()[getMemoryWord()];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	L = Memory.get()[ADDRESS];
+	H = Memory.get()[ADDRESS + 1];
 	break;
+}
 case 0x6C:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -252,8 +277,12 @@ case 0x72:
 	F = ALU.getFlags();
 	break;
 case 0x73:
-	Memory.get()[getMemoryWord()] = Stack.getStackPointer();
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = SP & BYTE_MASK;
+	Memory.get()[ADDRESS + 1] = SP >> 8;
 	break;
+}
 case 0x74:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -282,8 +311,12 @@ case 0x7A:
 	F = ALU.getFlags();
 	break;
 case 0x7B:
-	Stack.setStackPointer(Memory.get()[getMemoryWord()]);
+{
+	uint16_t ADDRESS = getMemoryWord();
+	uint16_t N_SP = (Memory.get()[ADDRESS + 1] << 8) | (uint16_t)(Memory.get()[ADDRESS]);
+	Stack.setStackPointer(N_SP);
 	break;
+}
 case 0x7C:
 	ALU.NEG(A);
 	F = ALU.getFlags();
@@ -357,7 +390,7 @@ case 0xA9:
 	F = (ALU.getFlags() | (F & CF));
 	ALU.INC_W(HL[M_REGISTER]);
 	ALU.DEC_W(BC[M_REGISTER]);
-	if(BC[M_REGISTER] != 0){
+	if(BC[M_REGISTER] == 0){
 		F |= PVF;
 	}else{
 		F &= ~PVF;
@@ -442,7 +475,9 @@ case 0xB9:
 	F = (ALU.getFlags() | (F & CF));
 	ALU.DEC_W(HL[M_REGISTER]);
 	ALU.DEC_W(BC[M_REGISTER]);
-	F &= ~PVF;
+	if(BC[M_REGISTER] != 0){
+		F |= PVF;
+	}
 	F |= NF;
 	if(BC[M_REGISTER] != 0 && (F & ZF) == 0){
 		rI = true;

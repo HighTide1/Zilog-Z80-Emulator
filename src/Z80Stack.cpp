@@ -160,6 +160,9 @@ uint8_t Z80Stack::popByte(){
  */
 uint16_t Z80Stack::popWord(){
 	uint16_t StackWord(0);
+	if(SP == 0){
+		StackWord = 1;
+	}
 	StackWord = Memory.get()[SP++];
 	StackWord = (Memory.get()[SP++] << 8) | StackWord;
 	return StackWord;

@@ -36,8 +36,12 @@ case 0x21:
 	IY = getMemoryWord();
 	break;
 case 0x22:
-	Memory.get()[getMemoryWord()] = IY;
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = IYL;
+	Memory.get()[ADDRESS + 1] = IYH;
 	break;
+}
 case 0x23:
 	ALU.INC_W(IY);
 	F = ALU.getFlags();
@@ -58,8 +62,12 @@ case 0x29:
 	F = (ALU.getFlags() & (HF | CF)) | (F & (SF | ZF | PVF));
 	break;
 case 0x2A:
-	IY = Memory.get()[getMemoryWord()];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	IYL = Memory.get()[ADDRESS];
+	IYH = Memory.get()[ADDRESS + 1];
 	break;
+}
 case 0x2B:
 	ALU.DEC_W(IY);
 	F = ALU.getFlags();
@@ -301,8 +309,7 @@ case 0xBE:
 	F = ALU.getFlags();
 	break;
 case 0xE1:
-	IYL = Stack.popByte();
-	IYH = Stack.popByte();
+	IY = Stack.popWord();
 	break;
 case 0xE3:
 {

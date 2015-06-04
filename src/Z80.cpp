@@ -61,7 +61,7 @@ void Z80::initializeRegisters(){
 	Memory = std::shared_ptr<uint8_t>(new uint8_t[MEMORY_SIZE], std::default_delete<uint8_t[]>());
 	this->resetMemory();
 
-	Stack = Z80Stack(0x100, Memory);
+	Stack = Z80Stack(0, Memory);
 	//ALU = Z80ALU();
 
 	IFF1 = false;
@@ -76,9 +76,9 @@ void Z80::initializeRegisters(){
 void Z80::storeRegister(uint16_t& Register, uint8_t NUM, uint8_t OLD_NUM, bool H_B){
 	if(OLD_NUM != NUM){
 		if(H_B){
-			Register = (NUM << 8) | (Register & BYTE_MASK);
+			Register = (NUM << 8) | (uint16_t)(Register & BYTE_MASK);
 		}else{
-			Register = (Register & (BYTE_MASK << 8)) | NUM;
+			Register = (Register & (BYTE_MASK << 8)) | (uint16_t)NUM;
 		}
 	}
 }
@@ -97,8 +97,9 @@ uint8_t Z80::getMemoryByte(){
  */
 uint16_t Z80::getMemoryWord(){
 	uint8_t L_B = getMemoryByte();
-	uint16_t H_B = getMemoryByte() << 8;
-	return H_B | L_B;
+	uint16_t H_B = getMemoryByte();
+	uint16_t Word = (H_B << 8) | (uint16_t)L_B;
+	return Word;
 }
 
 /**
@@ -214,7 +215,7 @@ void Z80::runCycle(){
 		mP = false;
 		uint8_t OPCode = Memory.get()[PC];
 		if(executeOPCode(OPCode) != 0){
-			std::cout << "Error. Incorrect Operation(" << OPCode << ") at " << PC << std::endl;
+			//std::cout << "Error. Incorrect Operation(" << OPCode << ") at " << PC << std::endl;
 		}
 		if(!rI && !mP){
 			PC += 1;
@@ -305,12 +306,12 @@ uint8_t Z80::executeOPCode(uint8_t OPCode){
 			}
 			break;
 		case 0xED:
-			OPCode = Memory.get()[PC + 1];
+			OPCode = Memory.get()[++PC];
 			switch(OPCode){
 				#include "Z80 Instruction Handler/EXTENDED.h"	//Finished
 			}
-			if(!rI){
-				PC += 1;
+			if(rI){
+				PC -= 1;
 			}
 			break;
 		case 0xFD:
@@ -346,6 +347,7 @@ uint8_t Z80::executeOPCode(uint8_t OPCode){
 	storeRegister(IX, IXL, C_IXL, false);
 	storeRegister(IY, IYH, C_IYH, true);
 	storeRegister(IY, IYL, C_IYL, false);
+	ALU.setFlags(F);
 	//Stack.setStackPointer(SP);
 	return ExitStatus;
 }

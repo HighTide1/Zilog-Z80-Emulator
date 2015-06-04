@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/CWD/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/CWD/operation=replace
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/CWD/value=E\:\\Computer Systems Reserved\\Z80Emulator\\Debug
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/MINGW32_HOME/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/MINGW32_HOME/operation=append
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/MINGW32_HOME/value=C\:\\MSYS64\\mingw32
@@ -22,6 +25,9 @@ environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/S_MSYS2
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/S_MSYS2_HOME/value=C\:\\MSYS32\\usr
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/append=true
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.63047176/appendContributed=true
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/CWD/delimiter=;
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/CWD/operation=replace
+environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/CWD/value=E\:\\Computer Systems Reserved\\Z80Emulator\\Debug
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/MINGW32_HOME/delimiter=;
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/MINGW32_HOME/operation=append
 environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.1147546487/MINGW32_HOME/value=C\:\\MSYS64\\mingw32

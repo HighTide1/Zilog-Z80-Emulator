@@ -34,7 +34,6 @@ case 0x02:
 	break;
 case 0x03:
 	ALU.INC_W(BC[M_REGISTER]);
-	//F = ALU.getFlags();
 	break;
 case 0x04:
 	ALU.INC_B(B);
@@ -60,7 +59,7 @@ case 0x08:
 }
 case 0x09:
 	ALU.ADD_W(HL[M_REGISTER], BC[M_REGISTER]);
-	//F = ALU.getFlags();
+	F = ALU.getFlags();
 	break;
 case 0x0A:
 	A = Memory.get()[BC[M_REGISTER]];
@@ -88,7 +87,7 @@ case 0x10:
 	ALU.DEC_B(B);
 	if((ALU.getFlags() & ZF) == 0){
 		uint16_t C_PC = PC;
-		PC = C_PC + (ALU.CMP_B(getMemoryByte()) + 2);
+		PC = (C_PC) + (ALU.CMP_B(getMemoryByte()) + 2);
 		mP = true;
 	}else{
 		PC += 1;
@@ -128,6 +127,7 @@ case 0x18:
 }
 case 0x19:
 	ALU.ADD_W(HL[M_REGISTER], DE[M_REGISTER]);
+	F = ALU.getFlags();
 	break;
 case 0x1A:
 	A = Memory.get()[DE[M_REGISTER]];
@@ -164,8 +164,12 @@ case 0x21:
 	HL[M_REGISTER] = getMemoryWord();
 	break;
 case 0x22:
-	Memory.get()[getMemoryWord()] = HL[M_REGISTER];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	Memory.get()[ADDRESS] = L;
+	Memory.get()[ADDRESS + 1] = H;
 	break;
+}
 case 0x23:
 	ALU.INC_W(HL[M_REGISTER]);
 	//F = ALU.getFlags();
@@ -240,6 +244,21 @@ case 0x27:
 			F |= CF;
 		}
 	}
+	if(A >> 7 == 1){
+		F |= SF;
+	}else{
+		F &= ~SF;
+	}
+	if(A == 0){
+		F |= ZF;
+	}else{
+		F &= ~ZF;
+	}
+	if(ALU.PARITY(A)){
+		F |= PVF;
+	}else{
+		F &= ~PVF;
+	}
 	break;
 }
 case 0x28:
@@ -253,11 +272,15 @@ case 0x28:
 	break;
 case 0x29:
 	ALU.ADD_W(HL[M_REGISTER], HL[M_REGISTER]);
-	//F = ALU.getFlags();
+	F = ALU.getFlags();
 	break;
 case 0x2A:
-	HL[M_REGISTER] = Memory.get()[getMemoryWord()];
+{
+	uint16_t ADDRESS = getMemoryWord();
+	L = Memory.get()[ADDRESS];
+	H = Memory.get()[ADDRESS + 1];
 	break;
+}
 case 0x2B:
 	ALU.DEC_W(HL[M_REGISTER]);
 	//F = ALU.getFlags();
@@ -311,6 +334,8 @@ case 0x36:
 	break;
 case 0x37:
 	F |= CF;
+	F &= ~HF;
+	F &= ~NF;
 	break;
 case 0x38:
 	if((F & CF) != 0){
@@ -323,7 +348,7 @@ case 0x38:
 	break;
 case 0x39:
 	ALU.ADD_W(HL[M_REGISTER], SP);
-	//F = ALU.getFlags();
+	F = ALU.getFlags();
 	break;
 case 0x3A:
 	A = Memory.get()[getMemoryWord()];
@@ -345,8 +370,14 @@ case 0x3E:
 	A = getMemoryByte();
 	break;
 case 0x3F:
+{
+	bool O_C = F & CF;
 	F ^= CF;
+	F &= ~HF;
+	F |= (O_C << 4);
+	F &= ~NF;
 	break;
+}
 case 0x40:
 	//B = B;
 	break;
@@ -805,10 +836,6 @@ case 0xC1:
 	BC[M_REGISTER] = Stack.popWord();
 	break;
 case 0xC2:
-	if(C_IXH == 242 && C_IXL == 43 && B == 214 && H == 30){
-		//Debug during updcrc routine.
-		uint8_t G = 2;
-	}
 	if((F & ZF) == 0){
 		PC = getMemoryWord();
 		mP = true;
@@ -907,7 +934,9 @@ case 0xD2:
 	break;
 case 0xD3:
 	//writeBus(A, getMemoryByte());
-	//std::exit(0);
+	PC += 1;
+	std::cout << "Warm boot" <<std::endl;
+	std::exit(0);
 	break;
 case 0xD4:
 	if((F & CF) == 0){
@@ -963,15 +992,24 @@ case 0xDA:
 case 0xDB:
 	//A = BUS[getMemoryByte()];
 	if(C == 2){
-		std::cout << Memory.get()[E] << std::endl;
+		std::cout << std::uppercase << std::hex << E;
 	}else if(C == 9){
+		std::cout << std::endl;
 		uint16_t Offset = 0;
-		while(Memory.get()[DE[M_REGISTER] + Offset] != '$'){
-			std::cout << Memory.get()[DE[M_REGISTER] + Offset];
-			Offset += 1;
+		uint8_t Character = Memory.get()[DE[M_REGISTER] + Offset];
+		while(Character != '$'){
+			std::cout << Character;
+			if((DE[M_REGISTER] + Offset + 1) < MEMORY_SIZE){
+				Offset += 1;
+			}else{
+				std::cout << std::endl;
+				break;
+			}
+			Character = Memory.get()[DE[M_REGISTER] + Offset];
 		}
 		std::cout << std::endl;
 	}
+	PC += 1;
 	break;
 case 0xDC:
 	if((F & CF) != 0){
@@ -995,7 +1033,7 @@ case 0xDF:
 	mP = true;
 	break;
 case 0xE0:
-	if((F & PVF) != 0){
+	if((F & PVF) == 0){
 		PC = Stack.popWord();
 		mP = true;
 	}
@@ -1004,7 +1042,7 @@ case 0xE1:
 	HL[M_REGISTER] = Stack.popWord();
 	break;
 case 0xE2:
-	if((F & PVF) != 0){
+	if((F & PVF) == 0){
 		PC = getMemoryWord();
 		mP = true;
 	}else{
@@ -1022,7 +1060,7 @@ case 0xE3:
 	break;
 }
 case 0xE4:
-	if((F & PVF) != 0){
+	if((F & PVF) == 0){
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;
@@ -1046,17 +1084,17 @@ case 0xE7:
 	mP = true;
 	break;
 case 0xE8:
-	if((F & PVF) == 0){
+	if((F & PVF) != 0){
 		PC = Stack.popWord();
 		mP = true;
 	}
 	break;
 case 0xE9:
-	PC = Memory.get()[HL[M_REGISTER]];
+	PC = HL[M_REGISTER];
 	mP = true;
 	break;
 case 0xEA:
-	if((F & PVF) == 0){
+	if((F & PVF) != 0){
 		PC = getMemoryWord();
 		mP = true;
 	}else{
@@ -1075,7 +1113,7 @@ case 0xEB:
 	break;
 }
 case 0xEC:
-	if((F & PVF) == 0){
+	if((F & PVF) != 0){
 		Stack.pushWord(PC + 3);
 		PC = getMemoryWord();
 		mP = true;

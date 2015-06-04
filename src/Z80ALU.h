@@ -49,9 +49,10 @@ class Z80ALU{
 
 		//Set the Flags similar throughout different operations
 		const uint8_t CHECK(uint8_t&);
+		const uint8_t CHECK(uint16_t&);
 
-		//Determine the Parity of a byte(True = Even, False = Odd)
-		const bool PARITY(uint8_t&);
+		//Determine the Parity of a byte(Odd = 0, Even = 1)
+		const uint8_t PARITY(uint8_t&);
 
 		//Addition Operations
 		void ADD_B(uint8_t&, uint8_t&);
